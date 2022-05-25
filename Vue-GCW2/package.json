@@ -1,0 +1,8 @@
+{
+    "name": "coursework",
+    "author": "Favour Idi",
+    "version": "1.0.0",
+    "dependencies": {
+        "express": "^4.17.3"
+    }
+}
