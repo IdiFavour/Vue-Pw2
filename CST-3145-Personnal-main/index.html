@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personnal</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.6.0/mdb.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <link href='https://unpkg.com/boxicons@2.1.2/dist/boxicons.js' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <div id="app">
+        <!-- Navbar -->
+        <nav class="navbar fixed-top navbar-expand-lg navbar-light shadow bg-light container-fluid">
+            <!-- Container wrapper -->
+            <div class="container-fluid">
+                <!-- Toggle button -->
+                <button class="navbar-toggler" type="button" data-mdb-toggle="collapse"
+                    data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <!-- Collapsible wrapper -->
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <!-- Navbar brand -->
+
+                    <!-- Left links -->
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <h4 class="nav-link h5 text-black">CST 3145</h4>
+                        </li>
+                    </ul>
+                    <!-- Left links -->
+                </div>
+                <!-- Collapsible wrapper -->
+
+                <!-- Right elements -->
+                <div class="d-flex align-items-center">
+                    <!-- Icon -->
+                    <a class="text-reset me-3" v-on:click="showCheckout">
+                        <i class="fas fa-shopping-cart fs-4"></i>
+                        <span class="badge rounded-pill badge-notification bg-danger">{{cartItemCount}}</span>
+                    </a>
+
+                </div>
+                <!-- Right elements -->
+            </div>
+            <!-- Container wrapper -->
+        </nav>
+        <div class="container mt-5">
+            <div v-if="showProduct">
+                <div class="row pt-5">
+                    <h4></h4>
+                    <div class="col-lg-2">
+                        <div class="still">
+                            <div class="form-check">
+                                <input class="form-check-input" value="Ascending" type="radio" id="ascending"
+                                    v-model="lowHigh" />
+                                <label class="form-check-label" for="ascending">Ascending</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" value="Descending" type="radio" id="descending"
+                                    v-model="lowHigh" />
+                                <label class="form-check-label" for="descending">Descending</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-10">
+                        <form class="form-a">
+                            <div class="row">
+                                <div class="col-md-8 mb-2">
+                                    <div class="form-group">
+                                        <input type="text" v-model="searchInput"
+                                            class="form-control p-2 ps-3 rounded-0 shadow-0 form-control-lg form-control-a"
+                                            placeholder="Search Lesson">
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <div class="form-group">
+                                        <select name="sortBy" v-model="sortBy"
+                                            class="form-control p-2 bg-white ps-3 form-select rounded-0 shadow-0 form-control-a form-control-lg">
+                                            <option>--Sort By--</option>
+                                            <option value="price">Price</option>
+                                            <option value="location">Location</option>
+                                            <option value="avalibility">Avalibility</option>
+                                            <option value="subject">Subject</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+                        <div class="product-list">
+                            <div class="row">
+                                <div v-for="lesson in filterLessons()" class="col-lg-3 col-sm-6 col-md-6 mb-2">
+                                    <div class=" p-2 border">
+                                        <div class="card-img text-center p-2 bg-dark-white">
+                                            <img v-bind:src="lesson.image" alt="" width="100" height="100">
+                                        </div>
+                                        <div class="card-body px-0 py-2">
+                                            <small class="text-black-50">Stock {{lesson.stock > 0 ?
+                                                lesson.stock : "Out of Stock"}}</small>
+                                            <h5 class="mb-0" v-text="lesson.subject"></h5>
+                                            <p class="mb-0" v-text="lesson.location"></p>
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <p class="mb-0 "><small class="text-black-50">Price:</small>
+                                                        <strong>${{lesson.price}}</strong>
+                                                    </p>
+                                                </div>
+                                                <div class="col-6 d-flex justify-content-end">
+                                                    <button type="button" class="btn main-color btn-floating"
+                                                        v-on:click="addToCart(lesson)" :disabled="lesson.stock < 1">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                            style="fill: rgb(238, 237, 237);">
+                                                            <path
+                                                                d="M5 22h14c1.103 0 2-.897 2-2V9a1 1 0 0 0-1-1h-3V7c0-2.757-2.243-5-5-5S7 4.243 7 7v1H4a1 1 0 0 0-1 1v11c0 1.103.897 2 2 2zM9 7c0-1.654 1.346-3 3-3s3 1.346 3 3v1H9V7zm-4 3h2v2h2v-2h6v2h2v-2h2l.002 10H5V10z">
+                                                            </path>
+                                                        </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <!-- <div v-for="lesson in filterLessons()" class="col-lg-4 p-2">
+                                    <div class="p-2 border ">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="mt-2">
+                                                <h4 v-text="lesson.subject"></h4>
+                                                <div class="mt-4">
+                                                    <h5 class=" mb-0" v-text="lesson.location"></h5>
+                                                    <p class="mb-0">Price: ${{lesson.price}}</p>
+                                                    
+                                                    <small class="text-black-50">Stock: {{lesson.stock > 0 ?
+                                                        lesson.stock : "Out of Stock"}}
+                                                    </small>
+                                                    <br>
+                                                    <button class="btn btn-black" v-on:click="addToCart(lesson)"
+                                                        :disabled="lesson.stock < 1"><small>Add to cart</small></button>
+                                                </div>
+                                            </div>
+                                            <div class="image">
+                                                <figure class="mb-0">
+                                                    <img v-bind:src="lesson.image" alt="" width="100" height="100">
+                                                </figure>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> -->
+
+                                <div v-if="filterLessons() == ''">
+                                    <div class="text-center mt-4">
+                                        <img src="images/empty-box.png" alt="" width="160" height="160">
+                                        <p class="mt-2"><strong>{{searchInput}}</strong> not Find</p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="pt-5" v-else>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="still">
+                            <h2 class="mt-5">Checkout</h2>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-outline mb-3 border mt-4">
+                                        <input type="text" id="form5Example1" v-model="firstName"
+                                            class="form-control" />
+                                        <label class="form-label" for="form5Example1">Firstname</label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-outline mb-3 border mt-4">
+                                        <input type="text" id="form5Example1" v-model="lastName" class="form-control" />
+                                        <label class="form-label" for="form5Example1">Lastname</label>
+                                    </div>
+
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-outline mb-4 border">
+                                        <input type="number" id="form5Example2" v-model="phoneNumber"
+                                            class="form-control" />
+                                        <label class="form-label" for="form5Example2">Phone Number</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <button class="btn main-color text-white mb-4" v-on:click="placeOrder">Place Order</button>
+                        </div>
+
+                    </div>
+                    <div class="col-lg-6">
+                        <div v-for="lesson in checkOut()" class="col-lg-12 p-2">
+                            <div class="p-2 border ">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="mt-2">
+                                        <h4 v-text="lesson.subject"></h4>
+                                        <div class="mt-4">
+                                            <h5 class=" mb-0" v-text="lesson.location"></h5>
+                                            <p class="mb-0">Price: ${{lesson.price}}</p>
+
+                                            <button class="btn btn-danger"
+                                                v-on:click="removeCartItem(lesson.id)"><small>Remove</small></button>
+                                        </div>
+                                    </div>
+                                    <div class="image">
+                                        <figure class="mb-0">
+                                            <img v-bind:src="lesson.image" alt="" width="120" height="140">
+                                        </figure>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="checkOut() == ''">
+                            <div class="text-center mt-4">
+                                <img src="images/empty-box.png" alt="" width="160" height="160">
+                                <p class="mt-2"><strong>Cart Empty</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="js/lessons.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript">
+        var webstore = new Vue({
+            el: '#app',
+            data: {
+                showProduct: true,
+                lowHigh: 'Ascending',
+                lessons: lessons,
+                cart: [],
+                searchInput: '',
+                sortBy: '--Sort By--',
+                firstName: "",
+                lastName: "",
+                phoneNumber: ""
+            },
+            methods: {
+                showCheckout() {
+                    this.showProduct = this.showProduct ? false : true;
+                },
+                addToCart(lesson) {
+                    this.cart.push(lesson)
+                    lesson.stock -= 1
+                    console.log(this.cart)
+                },
+                checkOut() {
+                    let show = this.cart
+                    return show
+                },
+                removeCartItem(id) {
+                    let showcart = this.cart
+                    let less = this.lessons
+                    for (let i = 0; i < showcart.length; i++) {
+                        console.log(showcart[i].id)
+                        if (id == showcart[i].id) {
+                            showcart.splice(i, 1)
+
+                        }
+                    }
+                    for (let i = 0; i < less.length; i++) {
+                        console.log(less[i].id)
+                        if (id == less[i].id) {
+                            less[i].stock += 1
+
+                        }
+                    }
+                },
+                placeOrder() {
+                    let showcart = this.cart
+                    if (this.firstName == '' && this.lastName == '' && this.phoneNumber == '' && this.cart.length == 0) {
+                        Swal.fire(
+                            'Error!',
+                            'Fill all details!',
+                            'Error'
+                        )
+                    }
+                    else{
+                        Swal.fire(
+                        'Success!',
+                        'Order submitted successfully!',
+                        'success'
+                        )
+                        this.firstName = ''
+                        this.lastName = ''
+                        this.phoneNumber = ''
+                        showcart.splice(0, showcart.length)
+                    }
+                    
+                },
+                cartCount(id) {
+                    let count = 0
+                    for (let i = 0; i < this.cart.length; i++) {
+                        if (this.cart[i] === id) {
+                            count++;
+                        }
+                    }
+                    return count
+                },
+                sortByPrice: function (priceArray) {
+                    function compare(a, b) {
+                        if (a.price > b.price)
+                            return 1;
+                        if (a.price < b.price)
+                            return -1;
+                        return 0;
+                    }
+                    return priceArray.sort(compare);
+                },
+                sortBySubject: function (subjectArray) {
+                    function compare(a, b) {
+                        if (a.subject > b.subject)
+                            return 1;
+                        if (a.subject < b.subject)
+                            return -1;
+                        return 0;
+                    }
+                    return subjectArray.sort(compare);
+                },
+                sortByLocation: function (locationArray) {
+                    function compare(a, b) {
+                        if (a.location > b.location)
+                            return 1;
+                        if (a.location < b.location)
+                            return -1;
+                        return 0;
+                    }
+                    return locationArray.sort(compare);
+                },
+                sortByAva: function (avaArray) {
+                    function compare(a, b) {
+                        if (a.stock > b.stock)
+                            return 1;
+                        if (a.stock < b.stock)
+                            return -1;
+                        return 0;
+                    }
+                    return avaArray.sort(compare);
+                },
+
+                filterLessons: function () {
+                    let tempLessons = this.lessons
+
+                    tempLessons = tempLessons.filter((lesson) => {
+                        return lesson.subject.toLowerCase().match(this.searchInput.toLowerCase()) || lesson.location.toLowerCase().match(this.searchInput.toLowerCase())
+                    })
+                    if (this.sortBy == 'price') {
+                        tempLessons = this.sortByPrice(tempLessons)
+                    }
+                    else if (this.sortBy == 'subject') {
+                        tempLessons = this.sortBySubject(tempLessons)
+                    }
+                    else if (this.sortBy == 'location') {
+                        tempLessons = this.sortByLocation(tempLessons)
+                    }
+                    else if (this.sortBy == 'stock') {
+                        tempLessons = this.sortByAva(tempLessons)
+                    }
+
+                    if (this.lowHigh == 'Ascending') {
+                        return tempLessons
+                    }
+                    else if (this.lowHigh == 'Descending') {
+                        return tempLessons.reverse()
+                    }
+                    return tempLessons
+                }
+
+            },
+            computed: {
+                cartItemCount: function () {
+                    return this.cart.length
+                },
+            }
+        });
+    </script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.6.0/mdb.min.js"></script>
+
+</body>
+
+</html>
