@@ -1,0 +1,16 @@
+{
+    "name": "mongo-demo",
+    "version": "1.0.0",
+    "description": "",
+    "private": true,
+    "main": "server.js",
+    "scripts": {
+        "start": "server.js"
+    },
+    "dependencies": {
+        "body-parser": "^1.20.0",
+        "cors": "^2.8.5",
+        "express": "^4.18.1",
+        "mongodb": "^4.6.0"
+    }
+}
