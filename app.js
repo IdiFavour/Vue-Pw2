@@ -16,7 +16,7 @@ app.use((req, res, next) => {
 const ObjectID = require('mongodb').ObjectId;
 const MongoClient = require('mongodb').MongoClient;
 let db;
-MongoClient.connect('mongodb+srv://idifavour:Junebuzz123@cluster0.9zqd2.mongodb.net/test', (err, client) => {
+MongoClient.connect('mongodb+srv://username:Password@cluster0.9zqd2.mongodb.net/test', (err, client) => {
     db = client.db('webstore')
 })
 
